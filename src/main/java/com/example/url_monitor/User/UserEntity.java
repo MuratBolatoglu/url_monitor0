@@ -24,7 +24,7 @@ public class UserEntity {
     private Long id;
 
     @Column(name="email",nullable = false, unique = true)
-    private String email_var;
+    private String emailVar;
 
     @Column(name="passwordHash", nullable = false)
     private String passwordHash_var;

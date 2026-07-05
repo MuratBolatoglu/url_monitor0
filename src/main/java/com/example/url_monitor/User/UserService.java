@@ -13,7 +13,7 @@ public class UserService {
 
         String hashed_password = password_encoder.encode(request.getPassword());
         UserEntity user= UserEntity.builder()
-                .email_var(request.getEmail())
+                .emailVar(request.getEmail())
                 .passwordHash_var(hashed_password)
                 .build();
         return user_repository.save(user);
