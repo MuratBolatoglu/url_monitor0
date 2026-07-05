@@ -29,9 +29,11 @@ public class UserEntity {
     @Column(name="passwordHash", nullable = false)
     private String passwordHash_var;
 
-    @Column(name="createdAt")
+    @Builder.Default
+    @Column(name="created_at")
     private LocalDateTime createdAt_var = LocalDateTime.now();
 
+    @Builder.Default
     @OneToMany(mappedBy = "user_var")
     private List<MonitorEntity> monitors = new ArrayList<>();
 }
