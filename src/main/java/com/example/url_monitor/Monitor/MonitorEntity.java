@@ -47,4 +47,22 @@ public class MonitorEntity {
     @OneToMany(mappedBy = "monitor_var")
     List<LogEntity> logs_var;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name="monitor_type",nullable = false)
+    private MonitorType monitor_type_var;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="http_method")
+    private HttpMethod http_method_var;
+
+    @Column(name="expected_code")
+    private Integer expected_code_var;
+
+    @Column(name="keyword")
+    private String keyword_var;
+
+    @Column(name="timeout",nullable = false)
+    private Integer timeout_var;
+
+
 }
