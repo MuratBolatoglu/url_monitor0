@@ -27,7 +27,7 @@ public class LogEntity {
     private Integer status_code_var;
 
     @Column(name="response_time_ms")
-    private Integer responser_time_ms_var;
+    private Integer response_time_ms_var;
 
     @Column(name="error_message")
     private String error_message_var;

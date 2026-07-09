@@ -34,6 +34,6 @@ public class UserEntity {
     private LocalDateTime createdAt_var = LocalDateTime.now();
 
     @Builder.Default
-    @OneToMany(mappedBy = "user_var")
+    @OneToMany(mappedBy = "userVar")
     private List<MonitorEntity> monitors = new ArrayList<>();
 }

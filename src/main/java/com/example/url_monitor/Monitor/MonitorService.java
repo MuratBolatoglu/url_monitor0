@@ -1,5 +1,8 @@
 package com.example.url_monitor.Monitor;
 
+import com.example.url_monitor.MonitorCheck.CheckMonitorService;
+import com.example.url_monitor.User.UserEntity;
+import com.example.url_monitor.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,17 +12,24 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MonitorService {
     private final MonitorRepository monitor_repository;
+    private final UserRepository user_repository;
+    private final CheckMonitorService monitor_check_service;
     public MonitorEntity CreateMonitor(MonitorDTO request){
         MonitorEntity monitor = MonitorEntity.builder()
-                .name_var(request.getMonitor_name())
-                .url_var(request.getMonitor_url())
-                .interval_seconds_var(request.getInterval_seconds())
+                .nameVar(request.getMonitor_name())
+                .urlVar(request.getMonitor_url())
+                .intervalSecondsVar(request.getInterval_seconds())
                 .monitor_type_var(request.getMonitor_type())
-                .expected_code_var(request.getExpected_status_code())
+                .expectedCodeVar(request.getExpected_status_code())
                 .keyword_var(request.getKeyword())
                 .http_method_var(request.getMethod())
-                .timeout_var(request.getTimeout())
+                .timeoutVar(request.getTimeout())
                 .build();
+
+        UserEntity user = user_repository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
+        monitor.setUserVar(user);
+
+
         return monitor_repository.save(monitor);
     }
     public MonitorEntity GetMonitor(Long id){
@@ -34,14 +44,19 @@ public class MonitorService {
 
     public MonitorEntity UpdateMonitor(Long id, MonitorDTO request){
         MonitorEntity monitor=monitor_repository.findById(id).orElseThrow(() -> new RuntimeException("Monitor not found"));
-        monitor.setName_var(request.getMonitor_name());
-        monitor.setUrl_var(request.getMonitor_url());
+        monitor.setNameVar(request.getMonitor_name());
+        monitor.setUrlVar(request.getMonitor_url());
         monitor.setMonitor_type_var(request.getMonitor_type());
-        monitor.setInterval_seconds_var(request.getInterval_seconds());
-        monitor.setExpected_code_var(request.getExpected_status_code());
+        monitor.setIntervalSecondsVar(request.getInterval_seconds());
+        monitor.setExpectedCodeVar(request.getExpected_status_code());
         monitor.setHttp_method_var(request.getMethod());
         monitor.setKeyword_var(request.getKeyword());
-        monitor.setTimeout_var(request.getTimeout());
+        monitor.setTimeoutVar(request.getTimeout());
         return monitor_repository.save(monitor);
+    }
+
+    public void CheckMonitor(Long id){
+        MonitorEntity monitor= GetMonitor(id);
+        monitor_check_service.CheckMonitor(monitor);
     }
 }

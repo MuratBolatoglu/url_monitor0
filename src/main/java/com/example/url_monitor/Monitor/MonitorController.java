@@ -25,4 +25,9 @@ public class MonitorController {
 
     @PutMapping("/{id}")
     public MonitorEntity UpdateMonitor(@PathVariable Long id, @RequestBody MonitorDTO request) {return monitor_service.UpdateMonitor(id,request);}
+
+    @PostMapping("/{id}/check")
+    public void CheckMonitor(@PathVariable long id){ monitor_service.CheckMonitor(id);}
+
+
 }

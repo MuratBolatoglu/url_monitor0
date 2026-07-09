@@ -2,6 +2,7 @@ package com.example.url_monitor.Monitor;
 
 import com.example.url_monitor.Log.LogEntity;
 import com.example.url_monitor.User.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,26 +24,29 @@ public class MonitorEntity {
     private Long id_var;
 
     @Column(name="name",nullable = false)
-    private String name_var;
+    private String nameVar;
 
     @Column(name="url",nullable = false)
-    private String url_var;
+    private String urlVar;
 
     @Column(name="status")
-    private String status_var="PENDING";
+    @Builder.Default
+    private String statusVar="PENDING";
 
     @Column(name="interval_seconds")
-    private Integer interval_seconds_var=60;
+    private Integer intervalSecondsVar=60;
 
     @Column(name="created_at")
-    private LocalDateTime created_at_var = LocalDateTime.now();
+    @Builder.Default
+    private LocalDateTime createdAtVar = LocalDateTime.now();
 
     @Column(name="last_checked_at")
     private LocalDateTime last_checked_at_var;
 
     @ManyToOne
     @JoinColumn(name="user_id")
-    UserEntity user_var;
+    @JsonIgnore
+    UserEntity userVar;
 
     @OneToMany(mappedBy = "monitor_var")
     List<LogEntity> logs_var;
@@ -56,13 +60,17 @@ public class MonitorEntity {
     private HttpMethod http_method_var;
 
     @Column(name="expected_code")
-    private Integer expected_code_var;
+    private Integer expectedCodeVar;
 
     @Column(name="keyword")
     private String keyword_var;
 
     @Column(name="timeout",nullable = false)
-    private Integer timeout_var;
+    private Integer timeoutVar;
+
+    @Column(name="enabled")
+    @Builder.Default
+    private Boolean enabledVar= true;
 
 
 }
