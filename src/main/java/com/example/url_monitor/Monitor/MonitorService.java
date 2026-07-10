@@ -1,5 +1,6 @@
 package com.example.url_monitor.Monitor;
 
+import com.example.url_monitor.Log.LogService;
 import com.example.url_monitor.MonitorCheck.CheckMonitorService;
 import com.example.url_monitor.User.UserEntity;
 import com.example.url_monitor.User.UserRepository;
@@ -14,6 +15,7 @@ public class MonitorService {
     private final MonitorRepository monitor_repository;
     private final UserRepository user_repository;
     private final CheckMonitorService monitor_check_service;
+    private final LogService log_service;
     public MonitorEntity CreateMonitor(MonitorDTO request){
         MonitorEntity monitor = MonitorEntity.builder()
                 .nameVar(request.getMonitor_name())
@@ -24,13 +26,14 @@ public class MonitorService {
                 .keyword_var(request.getKeyword())
                 .http_method_var(request.getMethod())
                 .timeoutVar(request.getTimeout())
+                .statusCode(null)
                 .build();
 
         UserEntity user = user_repository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
         monitor.setUserVar(user);
-
-
-        return monitor_repository.save(monitor);
+        monitor = monitor_repository.save(monitor);
+        log_service.CreateCreateLog(monitor,user);
+        return monitor;
     }
     public MonitorEntity GetMonitor(Long id){
         return monitor_repository.findById(id).orElseThrow(() -> new RuntimeException("Monitor not found"));

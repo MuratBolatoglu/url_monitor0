@@ -35,6 +35,9 @@ public class LogEntity {
     @Column(name="checked_at")
     private LocalDateTime checked_at_var = LocalDateTime.now();
 
+    @Column(name="message")
+    private String message;
+
     @ManyToOne
     @JoinColumn(name="monitor_id")
     private MonitorEntity monitor_var;

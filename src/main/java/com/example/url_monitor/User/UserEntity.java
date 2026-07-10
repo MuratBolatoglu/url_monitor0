@@ -36,4 +36,5 @@ public class UserEntity {
     @Builder.Default
     @OneToMany(mappedBy = "userVar")
     private List<MonitorEntity> monitors = new ArrayList<>();
+
 }

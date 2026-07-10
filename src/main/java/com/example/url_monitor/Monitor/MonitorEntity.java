@@ -40,6 +40,9 @@ public class MonitorEntity {
     @Builder.Default
     private LocalDateTime createdAtVar = LocalDateTime.now();
 
+    @Column(name="status_code")
+    private Integer statusCode;
+
     @Column(name="last_checked_at")
     private LocalDateTime last_checked_at_var;
 
