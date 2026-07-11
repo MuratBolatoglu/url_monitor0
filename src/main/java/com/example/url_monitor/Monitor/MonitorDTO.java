@@ -13,13 +13,11 @@ public class MonitorDTO {
 
    private Integer interval_seconds;
 
-   // HTTP monitorleri için
    private HttpMethod method;
    private Integer expected_status_code;
    private String keyword;
    private Integer timeout;
 
-   // İleride eklenecek
-   // private String request_body;
-   // private String request_headers;
+   private String request_body;
+   private String request_headers;
 }

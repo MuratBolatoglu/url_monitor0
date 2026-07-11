@@ -27,6 +27,8 @@ public class MonitorService {
                 .http_method_var(request.getMethod())
                 .timeoutVar(request.getTimeout())
                 .statusCode(null)
+                .requestBodyVar(request.getRequest_body())
+                .requestHeadersVar(request.getRequest_headers())
                 .build();
 
         UserEntity user = user_repository.findById(1L).orElseThrow(() -> new RuntimeException("User not found"));
@@ -55,6 +57,8 @@ public class MonitorService {
         monitor.setHttp_method_var(request.getMethod());
         monitor.setKeyword_var(request.getKeyword());
         monitor.setTimeoutVar(request.getTimeout());
+        monitor.setRequestBodyVar(request.getRequest_body());
+        monitor.setRequestHeadersVar(request.getRequest_headers());
         return monitor_repository.save(monitor);
     }
 

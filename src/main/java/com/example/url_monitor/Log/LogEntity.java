@@ -32,6 +32,7 @@ public class LogEntity {
     @Column(name="error_message")
     private String error_message_var;
 
+    @Builder.Default
     @Column(name="checked_at")
     private LocalDateTime checked_at_var = LocalDateTime.now();
 

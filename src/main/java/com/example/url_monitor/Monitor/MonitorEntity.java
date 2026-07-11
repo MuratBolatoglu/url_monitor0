@@ -75,5 +75,9 @@ public class MonitorEntity {
     @Builder.Default
     private Boolean enabledVar= true;
 
+    @Column(name = "request_body", columnDefinition = "TEXT")
+    private String requestBodyVar;
 
+    @Column(name = "request_headers", columnDefinition = "TEXT")
+    private String requestHeadersVar;
 }
