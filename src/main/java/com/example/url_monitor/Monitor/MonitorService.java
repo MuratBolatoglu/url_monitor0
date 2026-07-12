@@ -1,19 +1,23 @@
 package com.example.url_monitor.Monitor;
 
+import com.example.url_monitor.Log.LogRepository;
 import com.example.url_monitor.Log.LogService;
 import com.example.url_monitor.MonitorCheck.CheckMonitorService;
 import com.example.url_monitor.User.UserEntity;
 import com.example.url_monitor.User.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class MonitorService {
     private final MonitorRepository monitor_repository;
     private final UserRepository user_repository;
+    private final LogRepository log_repository;
     private final CheckMonitorService monitor_check_service;
     private final LogService log_service;
     public MonitorEntity CreateMonitor(MonitorDTO request){
@@ -44,6 +48,8 @@ public class MonitorService {
         return monitor_repository.findAll();
     }
     public void DeleteMonitor(Long id){
+        MonitorEntity monitor = GetMonitor(id);
+        log_repository.deleteAllByMonitorVar(monitor);
         monitor_repository.deleteById(id);
     }
 

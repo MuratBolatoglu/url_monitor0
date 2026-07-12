@@ -16,7 +16,7 @@ public class LogService {
                 .status_code_var(monitor.getExpectedCodeVar())
                 .response_time_ms_var(null)
                 .error_message_var(null)
-                .monitor_var(monitor)
+                .monitorVar(monitor)
                 .message(monitor.getNameVar() + " UP again with code " +monitor.getExpectedCodeVar()+" at " + monitor.getLast_checked_at_var())
                 .build();
         return log_repository.save(log);
@@ -29,7 +29,7 @@ public class LogService {
                 .response_time_ms_var(null)
                 .error_message_var(null)
                 .message(monitor.getNameVar() + " Down with code "+monitor.getStatusCode()+ " at " + monitor.getLast_checked_at_var())
-                .monitor_var(monitor)
+                .monitorVar(monitor)
                 .build();
         return log_repository.save(log);
     }
@@ -42,7 +42,9 @@ public class LogService {
     }
     public LogEntity CreateResponseTimeLog(int rt, MonitorEntity monitor){
         LogEntity log = LogEntity.builder()
+                .monitorVar(monitor)
                 .message("URL named "+ monitor.getUrlVar()+ " response time is " + Integer.toString(rt))
+                .monitorVar(monitor)
                 .status_var(monitor.getStatusVar())
                 .response_time_ms_var(rt)
                 .build();

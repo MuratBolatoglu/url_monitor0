@@ -49,10 +49,11 @@ public class MonitorEntity {
     @ManyToOne
     @JoinColumn(name="user_id")
     @JsonIgnore
-    UserEntity userVar;
+    private UserEntity userVar;
 
-    @OneToMany(mappedBy = "monitor_var")
-    List<LogEntity> logs_var;
+    @OneToMany(mappedBy = "monitorVar", cascade=CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
+    private List<LogEntity> logs_var;
 
     @Enumerated(EnumType.STRING)
     @Column(name="monitor_type",nullable = false)

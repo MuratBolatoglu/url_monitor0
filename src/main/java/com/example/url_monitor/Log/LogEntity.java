@@ -41,5 +41,5 @@ public class LogEntity {
 
     @ManyToOne
     @JoinColumn(name="monitor_id")
-    private MonitorEntity monitor_var;
+    private MonitorEntity monitorVar;
 }
