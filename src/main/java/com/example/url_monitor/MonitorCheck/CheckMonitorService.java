@@ -36,6 +36,9 @@ public class CheckMonitorService {
             case DNS:
                 CheckDns(monitor);
                 break;
+            case PING:
+                CheckPing(monitor);
+                break;
         }
     }
     public void CheckHttp(MonitorEntity monitor) {
@@ -82,6 +85,10 @@ public class CheckMonitorService {
             int statusCode = response.statusCode();
             if (statusCode == monitor.getExpectedCodeVar())  monitor.setStatusVar("UP");
             else monitor.setStatusVar("DOWN");
+            if(!monitor.getKeyword_var().isBlank() && monitor.getKeyword_var() != null){
+                String body= response.body();
+                if(!body.contains(monitor.getKeyword_var())) monitor.setStatusVar("DOWN");
+            }
             monitor.setStatusCode(statusCode);
             monitor.setLast_checked_at_var(LocalDateTime.now());
             log_service.CreateResponseTimeLog(responseTime,monitor);
@@ -89,6 +96,7 @@ public class CheckMonitorService {
         } catch (Exception e) {
             e.printStackTrace();
             monitor.setStatusVar("DOWN");
+            monitor.setStatusCode(null);
             monitor.setLast_checked_at_var(LocalDateTime.now());
             monitor_repository.save(monitor);
             LogEntity log = LogEntity.builder()
@@ -110,8 +118,11 @@ public class CheckMonitorService {
     public void CheckDns(MonitorEntity monitor){
         String prev=monitor.getStatusVar();
         try {
+            String host = URI.create(monitor.getUrlVar()).getHost();
+            if (host == null)  host = monitor.getUrlVar();
+
             long start = System.currentTimeMillis();
-            InetAddress address = InetAddress.getByName(monitor.getUrlVar());
+            InetAddress.getByName(host);
             long end=System.currentTimeMillis();
             int responseTime= (int) (end-start);
 
@@ -129,11 +140,46 @@ public class CheckMonitorService {
             monitor.setLast_checked_at_var(LocalDateTime.now());
 
             monitor_repository.save(monitor);
-            return;
         }
         if( !prev.equals(monitor.getStatusVar())){
             if(monitor.getStatusVar().equals("DOWN")) log_service.CreateDownLog(monitor);
             else if(monitor.getStatusVar().equals("UP")) log_service.CreateUpLog(monitor);
         }
+    }
+
+    public void CheckPing(MonitorEntity monitor){
+        String prev=monitor.getStatusVar();
+        try{
+            String host= URI.create(monitor.getUrlVar()).getHost();
+            if(host==null) host=monitor.getUrlVar();
+            InetAddress address = InetAddress.getByName(host);
+
+            long start=System.currentTimeMillis();
+            boolean reach = address.isReachable(monitor.getTimeoutVar() * 1000);
+            long end = System.currentTimeMillis();
+            int responseTime = (int) (end-start);
+
+            if(reach) monitor.setStatusVar("UP");
+            else monitor.setStatusVar("DOWN");
+
+
+            monitor.setStatusCode(null);
+            monitor.setLast_checked_at_var(LocalDateTime.now());
+            log_service.CreateResponseTimeLog(responseTime,monitor);
+
+            monitor_repository.save(monitor);
+
+        }catch (Exception e){
+            monitor.setStatusVar("DOWN");
+            monitor.setStatusCode(null);
+            monitor.setLast_checked_at_var(LocalDateTime.now());
+            monitor_repository.save(monitor);
+        }
+
+        if( !prev.equals(monitor.getStatusVar())){
+            if(monitor.getStatusVar().equals("DOWN")) log_service.CreateDownLog(monitor);
+            else if(monitor.getStatusVar().equals("UP")) log_service.CreateUpLog(monitor);
+        }
+
     }
 }

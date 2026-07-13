@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface MonitorRepository extends JpaRepository<MonitorEntity,Long> {
     List<MonitorEntity> findByUserVar(UserEntity user);
     List<MonitorEntity> findByEnabledVarTrue();
+    List<MonitorEntity>findAllByUserVar(UserEntity user);
 }

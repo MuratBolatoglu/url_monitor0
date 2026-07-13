@@ -35,7 +35,8 @@ public class LogService {
     }
     public LogEntity CreateCreateLog(MonitorEntity monitor, UserEntity user){
         LogEntity log= LogEntity.builder()
-                .message("Monitor created to "+ monitor.getUrlVar()+" bu user " + user.getEmailVar())
+                .monitorVar(monitor)
+                .message("Monitor created to "+ monitor.getUrlVar()+" by user " + user.getEmailVar())
                 .status_var("CREATED")
                 .build();
         return log_repository.save(log);
