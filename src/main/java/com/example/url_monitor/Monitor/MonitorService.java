@@ -1,5 +1,8 @@
 package com.example.url_monitor.Monitor;
 
+import com.example.url_monitor.Exceptions.BadRequestException;
+import com.example.url_monitor.Exceptions.ForbiddenException;
+import com.example.url_monitor.Exceptions.NotFoundException;
 import com.example.url_monitor.Log.LogRepository;
 import com.example.url_monitor.Log.LogService;
 import com.example.url_monitor.MonitorCheck.CheckMonitorService;
@@ -23,11 +26,13 @@ public class MonitorService {
     private final CheckMonitorService monitor_check_service;
     private final LogService log_service;
     public MonitorEntity CreateMonitor(MonitorDTO request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserEntity user = (UserEntity) authentication.getPrincipal();
 
         if (request.getMonitor_type() == MonitorType.HTTP) {
             String url = request.getMonitor_url();
             if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                throw new RuntimeException("HTTP monitor URL must start with http:// or https://");
+                throw new BadRequestException("HTTP monitor URL must start with http:// or https://");
             }
         }
         MonitorEntity monitor = MonitorEntity.builder()
@@ -43,8 +48,6 @@ public class MonitorService {
                 .requestBodyVar(request.getRequest_body())
                 .requestHeadersVar(request.getRequest_headers())
                 .build();
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserEntity user = (UserEntity) authentication.getPrincipal();
 
         monitor.setUserVar(user);
         monitor = monitor_repository.save(monitor);
@@ -55,9 +58,9 @@ public class MonitorService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = (UserEntity) authentication.getPrincipal();
 
-        MonitorEntity monitor = monitor_repository.findById(id).orElseThrow(() -> new RuntimeException("Monitor not found"));
+        MonitorEntity monitor = monitor_repository.findById(id).orElseThrow(() -> new NotFoundException("Monitor not found"));
 
-        if (!monitor.getUserVar().getId().equals(user.getId())) throw new RuntimeException("Forbidden");
+        if (!monitor.getUserVar().getId().equals(user.getId())) throw new ForbiddenException("Forbidden");;
 
         return monitor;
     }
@@ -70,7 +73,7 @@ public class MonitorService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = (UserEntity) authentication.getPrincipal();
         MonitorEntity monitor = GetMonitor(id);
-        if (!monitor.getUserVar().getId().equals(user.getId())) throw new RuntimeException("Forbidden");
+        if (!monitor.getUserVar().getId().equals(user.getId())) throw new ForbiddenException("Forbidden");;
         log_repository.deleteAllByMonitorVar(monitor);
         monitor_repository.deleteById(id);
     }
@@ -83,11 +86,11 @@ public class MonitorService {
                 throw new RuntimeException("HTTP monitor URL must start with http:// or https://");
             }
         }
-        MonitorEntity monitor=monitor_repository.findById(id).orElseThrow(() -> new RuntimeException("Monitor not found"));
+        MonitorEntity monitor=monitor_repository.findById(id).orElseThrow(() -> new NotFoundException("Monitor not found"));
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserEntity user = (UserEntity) authentication.getPrincipal();
-        if (!monitor.getUserVar().getId().equals(user.getId())) throw new RuntimeException("Forbidden");
+        if (!monitor.getUserVar().getId().equals(user.getId())) throw new ForbiddenException("Forbidden");;
 
         monitor.setNameVar(request.getMonitor_name());
         monitor.setUrlVar(request.getMonitor_url());
