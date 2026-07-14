@@ -3,11 +3,7 @@ package com.example.url_monitor.Log;
 import com.example.url_monitor.Monitor.MonitorEntity;
 import com.example.url_monitor.User.UserEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -49,14 +45,10 @@ public class LogService {
         LogEntity log = LogEntity.builder()
                 .monitorVar(monitor)
                 .message("URL named "+ monitor.getUrlVar()+ " response time is " + Integer.toString(rt))
+                .monitorVar(monitor)
                 .status_var(monitor.getStatusVar())
                 .response_time_ms_var(rt)
                 .build();
         return log_repository.save(log);
-    }
-    public List<LogEntity> GetLogs(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserEntity user = (UserEntity) authentication.getPrincipal();
-        return log_repository.findAllByMonitorVar_UserVar(user);
     }
 }
