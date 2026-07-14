@@ -3,10 +3,9 @@ spring:
     name: url_monitor
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/uptime_db
-    username: postgres
-    password: postgres
-
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
@@ -14,10 +13,6 @@ spring:
 
     show-sql: true
 server:
-
   port: 5000
 jwt:
-  secret: 1234567890123456789012345678901234567890123456789012345678901234
-
-  port: 5000
-
+  secret: ${JWT_SECRET}

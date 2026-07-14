@@ -3,6 +3,8 @@ package com.example.url_monitor.Security;
 import com.example.url_monitor.User.UserEntity;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -10,7 +12,14 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    private final SecretKey key = Keys.hmacShaKeyFor("1234567890123456789012345678901234567890123456789012345678901234".getBytes());
+    @Value("${jwt.secret}")
+    private String secret;
+    private  SecretKey key;
+    @PostConstruct
+    public void init(){
+        key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
+
     public String generateToken(UserEntity user) {
         return Jwts.builder()
                 .subject(user.getEmailVar())
