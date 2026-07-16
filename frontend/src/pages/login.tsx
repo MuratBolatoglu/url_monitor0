@@ -9,6 +9,17 @@ function Login() {
     return (
         <div>
             <Card>
+                <CardHeader>
+                    <CardTitle>Login</CardTitle>
+                    <CardDescription>Sign in to your account </CardDescription>
+
+                </CardHeader>
+
+                <CardContent>
+                    <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email"/>
+                    <Input value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password"/>  
+                </CardContent>
+
                 
             </Card>
         </div>
