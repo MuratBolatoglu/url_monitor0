@@ -3,16 +3,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import api from "@/services/api";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
-    function handleLogin() {
+    async function handleLogin() {
         try {
-            const response = api.post("auth/login", { password,email });
+            const response =await api.post("auth/login", { password,email });
             console.log("Login successful");
-            console.log(response);
+            console.log(response.data);
+            localStorage.setItem("token", response.data);
+            navigate("/dashboard");
         }catch (error) {
             console.error(error);
         }
