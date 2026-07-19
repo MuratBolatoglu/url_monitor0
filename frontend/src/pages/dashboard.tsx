@@ -4,7 +4,7 @@ import MonitorCard from "@/components/MonitorCard";
 import type { MonitorCardProps } from "@/types/Monitor";
 import { useEffect, useState } from "react";
 import api from "@/services/api";
-
+import AddMonitorDialog from "@/components/AddMonitorDialog";
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -33,11 +33,14 @@ function Dashboard() {
     <div className="min-h-screen p-8">
         <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Dashboard</h1>
-            <Button onClick={handleLogout}>Logout</Button>
+            <div className="flex items-center gap-2">
+                <AddMonitorDialog/>
+                <Button onClick={handleLogout}>Logout</Button>
+            </div>
         </div>
         <div className="mt-8">
             {monitors.map((monitor) =>
-                <MonitorCard name={monitor.name} url={monitor.url} status={monitor.status} key={monitor.url}/>
+                <MonitorCard {...monitor} key={monitor.urlVar}/>
             )}
         </div>
     </div>

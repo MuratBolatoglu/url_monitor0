@@ -2,18 +2,18 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AccordionContent, Accordion, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { MonitorCardProps } from "@/types/Monitor";
 
-function MonitorCard({name, url,status} : MonitorCardProps) {
+function MonitorCard(monitor : MonitorCardProps) {
     return (
         <Accordion defaultValue={[]} className="w-full">
-            <AccordionItem value={name}>
+            <AccordionItem value={monitor.nameVar}>
                 <AccordionTrigger>
                     <div className="flex w-full justify-between mr-4">
-                        <span>{name}</span>
-                        <span>{status}</span>
+                        <span>{monitor.nameVar}</span>
+                        <span>{monitor.statusVar}</span>
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <p>{url}</p>
+                    <p>{monitor.urlVar}</p>
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
