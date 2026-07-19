@@ -9,10 +9,11 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
-    if (token) {
+    const publicRoutes = ["auth/login", "users"];
+
+    if (token && config.url && !publicRoutes.includes(config.url)) {
         config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
 });
-
 export default api;
