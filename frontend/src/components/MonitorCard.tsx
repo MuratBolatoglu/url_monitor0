@@ -1,4 +1,3 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AccordionContent, Accordion, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import type { MonitorCardProps } from "@/types/Monitor";
 

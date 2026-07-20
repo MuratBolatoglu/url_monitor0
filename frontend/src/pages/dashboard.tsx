@@ -9,7 +9,6 @@ import AddMonitorDialog from "@/components/AddMonitorDialog";
 function Dashboard() {
     const navigate = useNavigate();
     const [monitors,setMonitors] = useState<MonitorCardProps[]>([])
-    useEffect(()=> {
         async function fetchMonitors(){
             try {
                 const response = await api.get("/monitors")
@@ -19,6 +18,8 @@ function Dashboard() {
             }
 
         }
+
+    useEffect(()=> {
         fetchMonitors();
     },[]);
 
@@ -34,13 +35,13 @@ function Dashboard() {
         <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Dashboard</h1>
             <div className="flex items-center gap-2">
-                <AddMonitorDialog/>
+                <AddMonitorDialog onMonitorCreated={fetchMonitors}/>
                 <Button onClick={handleLogout}>Logout</Button>
             </div>
         </div>
         <div className="mt-8">
             {monitors.map((monitor) =>
-                <MonitorCard {...monitor} key={monitor.urlVar}/>
+                <MonitorCard {...monitor} key={monitor.id_var}/>
             )}
         </div>
     </div>

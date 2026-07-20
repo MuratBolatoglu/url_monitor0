@@ -6,7 +6,12 @@ import { useState } from "react";
 import {Input} from "@/components/ui/input";
 import { NativeSelect,NativeSelectOption } from "./ui/native-select";
 import api from "@/services/api";
-function AddMonitorDialog() {
+
+type AddMonitorDialogProps = {
+    onMonitorCreated : () => void;
+};
+
+function AddMonitorDialog({onMonitorCreated} : AddMonitorDialogProps) {
     const [name,setName] = useState("");
     const [url,setUrl] =useState("");
     const [monitorType,setMonitorType] = useState("HTTP");
@@ -30,7 +35,8 @@ function AddMonitorDialog() {
                 interval_seconds: Number(interval),
                 request_body : requestBody,
                 request_headers : requestHeaders
-            })    
+            })  
+            onMonitorCreated();  
         } catch (error) {
             console.log(error);
         }
