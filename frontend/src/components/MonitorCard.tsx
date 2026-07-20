@@ -59,8 +59,6 @@ function MonitorCard({onMonitorDeleted, ...monitor}: MonitorCardProps) {
 
 type MonitorCardProps = Monitor & {
     onMonitorDeleted: () => Promise<void>;
-    onMonitorUpdated?: () => Promise<void>;
-    onMonitorCreated: () => Promise<void>;
 };
 
 type MonitorDetailProps = {
