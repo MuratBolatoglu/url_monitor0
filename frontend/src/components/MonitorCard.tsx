@@ -2,9 +2,9 @@ import { AccordionContent, Accordion, AccordionItem, AccordionTrigger } from "@/
 import type { Monitor } from "@/types/Monitor";
 import {Button} from "@/components/ui/button";
 import { Cog, Trash2 } from "lucide-react";
-import AddMonitorDialog  from "./AddMonitorDialog";
+import fetchMonitors from "@/pages/dashboard";
 import api from "@/services/api";
-function MonitorCard({onMonitorDeleted, onMonitorUpdated, ...monitor}: MonitorCardProps) {
+function MonitorCard({onMonitorDeleted, ...monitor}: MonitorCardProps) {
     async function deleteMonitor(monitorId: number) {
     try {
         await api.delete(`/monitors/${monitorId}`);
@@ -13,17 +13,6 @@ function MonitorCard({onMonitorDeleted, onMonitorUpdated, ...monitor}: MonitorCa
         console.error(error); 
     }
 }
-
-
-    async function updateMonitor(monitorId: number) {
-        try {
-            <AddMonitorDialog onSuccess={onMonitorUpdated} />
-            await api.put(`/monitors/${monitorId}`);
-            await onMonitorUpdated();
-        } catch (error) {
-            console.error(error);
-        }
-    }
     return (
         <Accordion defaultValue={[]} className="w-full">
             <AccordionItem value={monitor.nameVar}>
@@ -58,8 +47,8 @@ function MonitorCard({onMonitorDeleted, onMonitorUpdated, ...monitor}: MonitorCa
                         </div>
                     </div>
                     <div className=" justify-end mt-4 flex w-full gap-2">
-                        <Button size="icon" onClick={() => updateMonitor(monitor.id_var)}><Cog/></Button>
-                        <Button className=" hover:bg-red-300" size="icon" onClick={() => deleteMonitor(monitor.id_var)}><Trash2/></Button>  
+                        <Button size="icon"><Cog/></Button>
+                        <Button size="icon" onClick={() => deleteMonitor(monitor.id_var)}><Trash2/></Button>  
                     </div>
                     
                 </AccordionContent>
@@ -70,7 +59,6 @@ function MonitorCard({onMonitorDeleted, onMonitorUpdated, ...monitor}: MonitorCa
 
 type MonitorCardProps = Monitor & {
     onMonitorDeleted: () => Promise<void>;
-    onMonitorUpdated : () => Promise<void>;
 };
 
 type MonitorDetailProps = {

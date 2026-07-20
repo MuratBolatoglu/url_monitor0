@@ -6,14 +6,12 @@ import { useState } from "react";
 import {Input} from "@/components/ui/input";
 import { NativeSelect,NativeSelectOption } from "./ui/native-select";
 import api from "@/services/api";
-import type { Monitor } from "@/types/Monitor";
 
 type AddMonitorDialogProps = {
-    onSuccess: () => Promise<void>;
-    monitor?: Monitor;
+    onMonitorCreated : () => Promise<void>;
 };
 
-function AddMonitorDialog({onSuccess} : AddMonitorDialogProps) {
+function AddMonitorDialog({onMonitorCreated} : AddMonitorDialogProps) {
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const [name,setName] = useState("");
@@ -54,7 +52,7 @@ function AddMonitorDialog({onSuccess} : AddMonitorDialogProps) {
                 request_body : requestBody,
                 request_headers : requestHeaders
             })  
-            await onSuccess();  
+            await onMonitorCreated();  
             resetForm();
         setOpen(false);
         } catch (error) {
