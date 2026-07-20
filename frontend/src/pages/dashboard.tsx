@@ -35,13 +35,13 @@ function Dashboard() {
         <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Dashboard</h1>
             <div className="flex items-center gap-2">
-                <AddMonitorDialog onMonitorCreated={fetchMonitors}/>
+                <AddMonitorDialog onMonitorCreated={fetchMonitors} />
                 <Button onClick={handleLogout}>Logout</Button>
             </div>
         </div>
         <div className="mt-8">
             {monitors.map((monitor) =>
-                <MonitorCard {...monitor} key={monitor.id_var}/>
+                <MonitorCard onMonitorDeleted={fetchMonitors} {...monitor} key={monitor.id_var}/>
             )}
         </div>
     </div>
