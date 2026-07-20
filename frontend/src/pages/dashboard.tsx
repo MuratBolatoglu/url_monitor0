@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import MonitorCard from "@/components/MonitorCard";
-import type { MonitorCardProps } from "@/types/Monitor";
+import type { Monitor } from "@/types/Monitor";
 import { useEffect, useState } from "react";
 import api from "@/services/api";
 import AddMonitorDialog from "@/components/AddMonitorDialog";
 
 function Dashboard() {
     const navigate = useNavigate();
-    const [monitors,setMonitors] = useState<MonitorCardProps[]>([])
+    const [monitors,setMonitors] = useState<Monitor[]>([])
         async function fetchMonitors(){
             try {
                 const response = await api.get("/monitors")

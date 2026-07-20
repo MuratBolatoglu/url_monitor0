@@ -1,4 +1,4 @@
-export interface MonitorCardProps {
+export interface Monitor {
     id_var: number;
 
     nameVar: string;

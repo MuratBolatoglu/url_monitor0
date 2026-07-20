@@ -8,10 +8,12 @@ import { NativeSelect,NativeSelectOption } from "./ui/native-select";
 import api from "@/services/api";
 
 type AddMonitorDialogProps = {
-    onMonitorCreated : () => void;
+    onMonitorCreated : () => Promise<void>;
 };
 
 function AddMonitorDialog({onMonitorCreated} : AddMonitorDialogProps) {
+    const [loading, setLoading] = useState(false);
+    const [open, setOpen] = useState(false);
     const [name,setName] = useState("");
     const [url,setUrl] =useState("");
     const [monitorType,setMonitorType] = useState("HTTP");
@@ -22,9 +24,23 @@ function AddMonitorDialog({onMonitorCreated} : AddMonitorDialogProps) {
     const [requestBody, setRequestBody] = useState("");
     const [requestHeaders, setRequestHeaders] = useState("");
     const [keyword, setKeyword] = useState("");
+
+    function resetForm() {
+    setName("");
+    setUrl("");
+    setMonitorType("HTTP");
+    setMethod("GET");
+    setExpectedStatus("200");
+    setTimeout("");
+    setInterval("");
+    setRequestBody("");
+    setRequestHeaders("");
+    setKeyword("");
+    }
     async function createMonitor(){
         try {
-            const response = await api.post("/monitors",{
+            setLoading(true);
+            await api.post("/monitors",{
                 monitor_name : name,
                 monitor_url : url,
                 monitor_type: monitorType,
@@ -36,17 +52,22 @@ function AddMonitorDialog({onMonitorCreated} : AddMonitorDialogProps) {
                 request_body : requestBody,
                 request_headers : requestHeaders
             })  
-            onMonitorCreated();  
+            await onMonitorCreated();  
+            resetForm();
+        setOpen(false);
         } catch (error) {
             console.log(error);
+        }finally {
+            setLoading(false);
         }
+            
 
 
     }
 
 
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger render={<Button size="icon"><Plus /></Button>}/>
             <DialogContent>
                 <DialogHeader>
@@ -85,7 +106,7 @@ function AddMonitorDialog({onMonitorCreated} : AddMonitorDialogProps) {
                 <Input placeholder="Timeout (ms)" value={timeout} onChange={(e)=>setTimeout(e.target.value)}/>
                 <Input placeholder="Interval (seconds)" value={interval} onChange={(e)=>setInterval(e.target.value)}/>
                 </div>
-                <Button className="w-full" type="button" onClick={()=>createMonitor()}>Create Monitor</Button>
+                <Button disabled={loading} className="w-full" type="button" onClick={()=>createMonitor()}>{loading ? "Creating..." : "Create Monitor"}</Button>
             </DialogContent>
         </Dialog>
     );
