@@ -2,7 +2,6 @@ import { AccordionContent, Accordion, AccordionItem, AccordionTrigger } from "@/
 import type { Monitor } from "@/types/Monitor";
 import {Button} from "@/components/ui/button";
 import { Cog, Trash2 } from "lucide-react";
-import fetchMonitors from "@/pages/dashboard";
 import api from "@/services/api";
 function MonitorCard({onMonitorDeleted, ...monitor}: MonitorCardProps) {
     async function deleteMonitor(monitorId: number) {
