@@ -38,7 +38,7 @@ function Dashboard() {
                 </div>
             </div>
             <div className="mt-8">
-                {monitors.map((monitor) => <MonitorCard key={monitor.id_var} {...monitor} />)}
+                {monitors.map((monitor) => <MonitorCard onMonitorEdited={fetchMonitors} onMonitorDeleted={fetchMonitors} key={monitor.id_var} monitor={monitor} />)}
             </div>
         </div>
     );

@@ -2,8 +2,24 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 import { Cog, Trash2 } from "lucide-react";
 import type { Monitor } from "@/types/Monitor";
+import api from "@/services/api";
 
-function MonitorCard(monitor: Monitor) {
+type MonitorCardProps ={
+    monitor: Monitor;
+    onMonitorDeleted: () => Promise<void>;
+    onMonitorEdited: () => Promise<void>;
+}
+
+function MonitorCard({ monitor, onMonitorDeleted, onMonitorEdited }: MonitorCardProps) {
+    
+    async function deleteMonitor() {
+        try {
+            await api.delete(`/monitors/${monitor.id_var}`);
+            await onMonitorDeleted();
+        }catch (error) {
+            console.error(error);
+        }
+    }
     return (
         <Accordion defaultValue={[]} className="w-full">
             <AccordionItem value={String(monitor.id_var)}>
@@ -37,7 +53,7 @@ function MonitorCard(monitor: Monitor) {
                     </div>
                     <div className="mt-3 flex w-full justify-end gap-2">
                         <Button size="icon" aria-label="Edit monitor"><Cog /></Button>
-                        <Button size="icon" aria-label="Delete monitor" className="hover:bg-red-300"><Trash2 /></Button>
+                        <Button onClick={()=>deleteMonitor()} size="icon" aria-label="Delete monitor" className="hover:bg-red-300"><Trash2 /></Button>
                     </div>
                 </AccordionContent>
             </AccordionItem>
