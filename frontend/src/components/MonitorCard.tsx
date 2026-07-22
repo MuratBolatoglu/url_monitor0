@@ -7,6 +7,7 @@ import api from "@/services/api";
 import { useState } from "react";
 import type { Log } from "@/types/Log";
 import MonitorLogs from "@/components/MonitorLogs";
+import ResponseChart from "@/components/ResponseChart";
 
 type MonitorCardProps ={
     monitor: Monitor;
@@ -67,7 +68,7 @@ function MonitorCard({ monitor, onMonitorDeleted, onMonitorEdited }: MonitorCard
                         </div>
                         <div className="min-h-40 rounded-lg border p-3">
                             <h3 className="mb-2 font-semibold">Response Time</h3>
-                            <div className="flex h-28 items-center justify-center text-sm text-muted-foreground">Chart gelecek</div>
+                            <div className="flex h-28 items-center justify-center text-sm text-muted-foreground"><ResponseChart logs={logs}></ResponseChart></div>
                         </div>
                     </div>
                     <div className="mt-3 flex w-full justify-end gap-2">
