@@ -59,4 +59,9 @@ public class LogService {
         UserEntity user = (UserEntity) authentication.getPrincipal();
         return log_repository.findAllByMonitorVar_UserVar(user);
     }
+    public List<LogEntity> GetLogsByMonitorId(Long monitorId) {
+        Authentication authentication =SecurityContextHolder.getContext().getAuthentication();
+        UserEntity user = (UserEntity) authentication.getPrincipal();
+        return log_repository.findAllByMonitorAndUser(monitorId, user);
+    }
 }

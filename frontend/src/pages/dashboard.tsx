@@ -21,6 +21,8 @@ function Dashboard() {
 
     useEffect(() => {
         fetchMonitors();
+        const intervalId = setInterval(() => {fetchMonitors();}, 5000);
+        return () => clearInterval(intervalId);
     }, []);
 
     function handleLogout() {

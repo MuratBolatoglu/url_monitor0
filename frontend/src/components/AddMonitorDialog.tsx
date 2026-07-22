@@ -28,20 +28,20 @@ function AddMonitorDialog({ onSuccess, mode, monitor }: AddMonitorDialogProps) {
     const [requestHeaders, setRequestHeaders] = useState("");
     const [keyword, setKeyword] = useState("");
 
-useEffect(() => {
-    if (open && mode === "edit" && monitor) {
-        setName(monitor.nameVar ?? "");
-        setUrl(monitor.urlVar ?? "");
-        setMonitorType(monitor.monitor_type_var ?? "HTTP");
-        setMethod(monitor.http_method_var ?? "GET");
-        setExpectedStatus(String(monitor.expectedCodeVar ?? 200));
-        setTimeout(String(monitor.timeoutVar ?? ""));
-        setInterval(String(monitor.intervalSecondsVar ?? ""));
-        setRequestBody(monitor.requestBodyVar ?? "");
-        setRequestHeaders(monitor.requestHeadersVar ?? "");
-        setKeyword(monitor.keyword_var ?? "");
-    }
-}, [open, mode, monitor]);
+    useEffect(() => {
+        if (open && mode === "edit" && monitor) {
+            setName(monitor.nameVar ?? "");
+            setUrl(monitor.urlVar ?? "");
+            setMonitorType(monitor.monitor_type_var ?? "HTTP");
+            setMethod(monitor.http_method_var ?? "GET");
+            setExpectedStatus(String(monitor.expectedCodeVar ?? 200));
+            setTimeout(String(monitor.timeoutVar ?? ""));
+            setInterval(String(monitor.intervalSecondsVar ?? ""));
+            setRequestBody(monitor.requestBodyVar ?? "");
+            setRequestHeaders(monitor.requestHeadersVar ?? "");
+            setKeyword(monitor.keyword_var ?? "");
+        }
+    }, [open, mode, monitor]);
     function resetForm() {
         setName("");
         setUrl("");

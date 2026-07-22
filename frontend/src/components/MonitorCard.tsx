@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import {  Trash2 } from "lucide-react";
 import type { Monitor } from "@/types/Monitor";
 import api from "@/services/api";
+import { useState } from "react";
+import type { Log } from "@/types/Log";
+import MonitorLogs from "@/components/MonitorLogs";
 
 type MonitorCardProps ={
     monitor: Monitor;
@@ -12,6 +15,9 @@ type MonitorCardProps ={
 }
 
 function MonitorCard({ monitor, onMonitorDeleted, onMonitorEdited }: MonitorCardProps) {
+    const [logs, setLogs] = useState<Log[]>([]);
+    const [loadingLogs, setLoadingLogs] = useState(false);
+
     async function deleteMonitor() {
         try {
             await api.delete(`/monitors/${monitor.id_var}`);
@@ -20,8 +26,21 @@ function MonitorCard({ monitor, onMonitorDeleted, onMonitorEdited }: MonitorCard
             console.error(error);
         }
     }
+
+    async function fetchLogs() {
+        try{
+            setLoadingLogs(true);
+            const response = await api.get(`/logs/monitor/${monitor.id_var}`);
+            setLogs(response.data);
+        }catch (error) {
+            console.error(error);
+        } finally {
+            setLoadingLogs(false);
+        }
+    }
+
     return (
-        <Accordion defaultValue={[]} className="w-full">
+        <Accordion defaultValue={[]} className="w-full" onValueChange={(value) => {if (value.includes(String(monitor.id_var))) {fetchLogs();}}}>
             <AccordionItem value={String(monitor.id_var)}>
                 <AccordionTrigger>
                     <div className="mr-4 flex w-full justify-between">
@@ -54,6 +73,10 @@ function MonitorCard({ monitor, onMonitorDeleted, onMonitorEdited }: MonitorCard
                     <div className="mt-3 flex w-full justify-end gap-2">
                         <AddMonitorDialog mode="edit" onSuccess={onMonitorEdited} monitor={monitor} />
                         <Button onClick={()=>deleteMonitor()} size="icon" aria-label="Delete monitor" className="hover:bg-red-300"><Trash2 color="red" /></Button>
+                    </div>
+                    <div className="mt-4">
+                        <h3 className="mb-2 font-semibold">Logs</h3>
+                        <MonitorLogs logs={logs} loading={loadingLogs}/>
                     </div>
                 </AccordionContent>
             </AccordionItem>
