@@ -1,17 +1,20 @@
-import { useState } from "react";
-import { Plus } from "lucide-react";
+import { Cog, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import api from "@/services/api";
+import type { Monitor } from "@/types/Monitor";
+import { useEffect,useState } from "react";
 
 type AddMonitorDialogProps = {
-    onMonitorCreated: () => Promise<void>;
+    onSuccess: () => Promise<void>;
+    mode : "add" | "edit";
+    monitor?: Monitor;
 };
 
-function AddMonitorDialog({ onMonitorCreated }: AddMonitorDialogProps) {
+function AddMonitorDialog({ onSuccess, mode, monitor }: AddMonitorDialogProps) {
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
@@ -25,6 +28,20 @@ function AddMonitorDialog({ onMonitorCreated }: AddMonitorDialogProps) {
     const [requestHeaders, setRequestHeaders] = useState("");
     const [keyword, setKeyword] = useState("");
 
+useEffect(() => {
+    if (open && mode === "edit" && monitor) {
+        setName(monitor.nameVar ?? "");
+        setUrl(monitor.urlVar ?? "");
+        setMonitorType(monitor.monitor_type_var ?? "HTTP");
+        setMethod(monitor.http_method_var ?? "GET");
+        setExpectedStatus(String(monitor.expectedCodeVar ?? 200));
+        setTimeout(String(monitor.timeoutVar ?? ""));
+        setInterval(String(monitor.intervalSecondsVar ?? ""));
+        setRequestBody(monitor.requestBodyVar ?? "");
+        setRequestHeaders(monitor.requestHeadersVar ?? "");
+        setKeyword(monitor.keyword_var ?? "");
+    }
+}, [open, mode, monitor]);
     function resetForm() {
         setName("");
         setUrl("");
@@ -37,7 +54,38 @@ function AddMonitorDialog({ onMonitorCreated }: AddMonitorDialogProps) {
         setRequestHeaders("");
         setKeyword("");
     }
+    async function handleDialog(){
+        if(mode === "add"){
+            await createMonitor();
+        }else if(mode === "edit"){
+            await editMonitor(monitor);
+        }
+    }
 
+    async function editMonitor(monitor: Monitor | undefined) {
+        if (!monitor) return;
+        try {
+            setLoading(true);
+            await api.put(`/monitors/${monitor.id_var}`, {
+                monitor_name: name,
+                monitor_url: url,
+                monitor_type: monitorType,
+                method,
+                keyword,
+                expected_status_code: Number(expectedStatus),
+                timeout: Number(timeout),
+                interval_seconds: Number(interval),
+                request_body: requestBody,
+                request_headers: requestHeaders,
+            });
+            await onSuccess();
+            setOpen(false);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    }
     async function createMonitor() {
         try {
             setLoading(true);
@@ -53,7 +101,7 @@ function AddMonitorDialog({ onMonitorCreated }: AddMonitorDialogProps) {
                 request_body: requestBody,
                 request_headers: requestHeaders,
             });
-            await onMonitorCreated();
+            await onSuccess();
             resetForm();
             setOpen(false);
         } catch (error) {
@@ -65,9 +113,9 @@ function AddMonitorDialog({ onMonitorCreated }: AddMonitorDialogProps) {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger render={<Button size="icon"><Plus /></Button>} />
+            <DialogTrigger render={mode === "add" ? <Button size="icon"><Plus /></Button> : <Button size="icon"><Cog /></Button>}/>
             <DialogContent>
-                <DialogHeader><DialogTitle>Add Monitor</DialogTitle></DialogHeader>
+                <DialogHeader><DialogTitle>{mode === "add" ? "Add Monitor" : "Edit Monitor"}</DialogTitle></DialogHeader>
                 <div className="mt-4 space-y-4">
                     <Input placeholder="Monitor Name" value={name} onChange={(e) => setName(e.target.value)} />
                     <Input placeholder="URL" value={url} onChange={(e) => setUrl(e.target.value)} />
@@ -98,8 +146,8 @@ function AddMonitorDialog({ onMonitorCreated }: AddMonitorDialogProps) {
                     <Input placeholder="Timeout (ms)" value={timeout} onChange={(e) => setTimeout(e.target.value)} />
                     <Input placeholder="Interval (seconds)" value={interval} onChange={(e) => setInterval(e.target.value)} />
                 </div>
-                <Button disabled={loading} className="w-full" type="button" onClick={createMonitor}>
-                    {loading ? "Creating..." : "Create Monitor"}
+                <Button disabled={loading} className="w-full" type="button" onClick={handleDialog}>
+                     {loading ? mode === "add" ? "Creating..." : "Saving...": mode === "add" ? "Create Monitor" : "Save Changes"}
                 </Button>
             </DialogContent>
         </Dialog>

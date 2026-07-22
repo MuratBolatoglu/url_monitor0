@@ -1,6 +1,7 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import AddMonitorDialog from "@/components/AddMonitorDialog";
 import { Button } from "@/components/ui/button";
-import { Cog, Trash2 } from "lucide-react";
+import {  Trash2 } from "lucide-react";
 import type { Monitor } from "@/types/Monitor";
 import api from "@/services/api";
 
@@ -11,7 +12,6 @@ type MonitorCardProps ={
 }
 
 function MonitorCard({ monitor, onMonitorDeleted, onMonitorEdited }: MonitorCardProps) {
-    
     async function deleteMonitor() {
         try {
             await api.delete(`/monitors/${monitor.id_var}`);
@@ -52,14 +52,27 @@ function MonitorCard({ monitor, onMonitorDeleted, onMonitorEdited }: MonitorCard
                         </div>
                     </div>
                     <div className="mt-3 flex w-full justify-end gap-2">
-                        <Button size="icon" aria-label="Edit monitor"><Cog /></Button>
-                        <Button onClick={()=>deleteMonitor()} size="icon" aria-label="Delete monitor" className="hover:bg-red-300"><Trash2 /></Button>
+                        <AddMonitorDialog mode="edit" onSuccess={onMonitorEdited} monitor={monitor} />
+                        <Button onClick={()=>deleteMonitor()} size="icon" aria-label="Delete monitor" className="hover:bg-red-300"><Trash2 color="red" /></Button>
                     </div>
                 </AccordionContent>
             </AccordionItem>
         </Accordion>
     );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 type MonitorDetailProps = {
     label: string;

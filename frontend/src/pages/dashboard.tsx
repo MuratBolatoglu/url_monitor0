@@ -33,7 +33,7 @@ function Dashboard() {
             <div className="flex items-center justify-between">
                 <h1 className="text-3xl font-bold">Dashboard</h1>
                 <div className="flex items-center gap-2">
-                    <AddMonitorDialog onMonitorCreated={fetchMonitors} />
+                    <AddMonitorDialog mode="add" onSuccess={fetchMonitors} />
                     <Button onClick={handleLogout}>Logout</Button>
                 </div>
             </div>
