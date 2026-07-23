@@ -1,22 +1,36 @@
-import { Cog, Plus } from "lucide-react";
+import { Cog, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import {
+    NativeSelect,
+    NativeSelectOption,
+} from "@/components/ui/native-select";
 import api from "@/services/api";
 import type { Monitor } from "@/types/Monitor";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 type AddMonitorDialogProps = {
     onSuccess: () => Promise<void>;
-    mode : "add" | "edit";
+    mode: "add" | "edit";
     monitor?: Monitor;
 };
 
-function AddMonitorDialog({ onSuccess, mode, monitor }: AddMonitorDialogProps) {
+function AddMonitorDialog({
+    onSuccess,
+    mode,
+    monitor,
+}: AddMonitorDialogProps) {
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
+
     const [name, setName] = useState("");
     const [url, setUrl] = useState("");
     const [monitorType, setMonitorType] = useState("HTTP");
@@ -42,6 +56,7 @@ function AddMonitorDialog({ onSuccess, mode, monitor }: AddMonitorDialogProps) {
             setKeyword(monitor.keyword_var ?? "");
         }
     }, [open, mode, monitor]);
+
     function resetForm() {
         setName("");
         setUrl("");
@@ -54,19 +69,22 @@ function AddMonitorDialog({ onSuccess, mode, monitor }: AddMonitorDialogProps) {
         setRequestHeaders("");
         setKeyword("");
     }
-    async function handleDialog(){
-        if(mode === "add"){
+
+    async function handleDialog() {
+        if (mode === "add") {
             await createMonitor();
-        }else if(mode === "edit"){
+        } else {
             await editMonitor(monitor);
         }
     }
 
-    async function editMonitor(monitor: Monitor | undefined) {
-        if (!monitor) return;
+    async function editMonitor(currentMonitor?: Monitor) {
+        if (!currentMonitor) return;
+
         try {
             setLoading(true);
-            await api.put(`/monitors/${monitor.id_var}`, {
+
+            await api.put(`/monitors/${currentMonitor.id_var}`, {
                 monitor_name: name,
                 monitor_url: url,
                 monitor_type: monitorType,
@@ -78,6 +96,7 @@ function AddMonitorDialog({ onSuccess, mode, monitor }: AddMonitorDialogProps) {
                 request_body: requestBody,
                 request_headers: requestHeaders,
             });
+
             await onSuccess();
             setOpen(false);
         } catch (error) {
@@ -86,9 +105,11 @@ function AddMonitorDialog({ onSuccess, mode, monitor }: AddMonitorDialogProps) {
             setLoading(false);
         }
     }
+
     async function createMonitor() {
         try {
             setLoading(true);
+
             await api.post("/monitors", {
                 monitor_name: name,
                 monitor_url: url,
@@ -101,6 +122,7 @@ function AddMonitorDialog({ onSuccess, mode, monitor }: AddMonitorDialogProps) {
                 request_body: requestBody,
                 request_headers: requestHeaders,
             });
+
             await onSuccess();
             resetForm();
             setOpen(false);
@@ -111,46 +133,340 @@ function AddMonitorDialog({ onSuccess, mode, monitor }: AddMonitorDialogProps) {
         }
     }
 
+    const inputClassName =
+        "h-11 border-slate-700 bg-slate-950 text-slate-100 placeholder:text-slate-600 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/20";
+
+    const selectClassName =
+        "h-11 w-full border-slate-700 bg-slate-950 text-slate-100";
+
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger render={mode === "add" ? <Button size="icon"><Plus /></Button> : <Button size="icon"><Cog /></Button>}/>
-            <DialogContent>
-                <DialogHeader><DialogTitle>{mode === "add" ? "Add Monitor" : "Edit Monitor"}</DialogTitle></DialogHeader>
-                <div className="mt-4 space-y-4">
-                    <Input placeholder="Monitor Name" value={name} onChange={(e) => setName(e.target.value)} />
-                    <Input placeholder="URL" value={url} onChange={(e) => setUrl(e.target.value)} />
-                    <NativeSelect className="w-full" value={monitorType} onChange={(e) => setMonitorType(e.target.value)}>
-                        <NativeSelectOption value="HTTP">HTTP</NativeSelectOption>
-                        <NativeSelectOption value="PING">PING</NativeSelectOption>
-                        <NativeSelectOption value="DNS">DNS</NativeSelectOption>
-                    </NativeSelect>
-                    {monitorType === "HTTP" && (
-                        <>
-                            <NativeSelect className="w-full" value={method} onChange={(e) => setMethod(e.target.value)}>
-                                <NativeSelectOption value="GET">GET</NativeSelectOption>
-                                <NativeSelectOption value="POST">POST</NativeSelectOption>
-                                <NativeSelectOption value="PUT">PUT</NativeSelectOption>
-                                <NativeSelectOption value="PATCH">PATCH</NativeSelectOption>
-                                <NativeSelectOption value="DELETE">DELETE</NativeSelectOption>
-                                <NativeSelectOption value="HEAD">HEAD</NativeSelectOption>
-                                <NativeSelectOption value="OPTIONS">OPTIONS</NativeSelectOption>
+            <DialogTrigger
+                render={
+                    mode === "add" ? (
+                        <Button
+                            size="icon"
+                            className="bg-indigo-600 text-white hover:bg-indigo-500"
+                            aria-label="Add monitor"
+                        >
+                            <Plus className="size-4" />
+                        </Button>
+                    ) : (
+                        <Button
+                            size="icon"
+                            variant="outline"
+                            className="border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white"
+                            aria-label="Edit monitor"
+                        >
+                            <Cog className="size-4" />
+                        </Button>
+                    )
+                }
+            />
+
+            <DialogContent className="max-h-[90vh] overflow-y-auto border-slate-800 bg-slate-900 text-slate-100 sm:max-w-2xl">
+                <DialogHeader>
+                    <DialogTitle className="text-xl text-white">
+                        {mode === "add"
+                            ? "Add Monitor"
+                            : "Edit Monitor"}
+                    </DialogTitle>
+
+                    <p className="text-sm text-slate-400">
+                        {mode === "add"
+                            ? "Create a new monitor and configure its check settings."
+                            : "Update the selected monitor configuration."}
+                    </p>
+                </DialogHeader>
+
+                <div className="mt-3 space-y-6">
+                    <FormSection
+                        title="General Information"
+                        description="Basic monitor information and type."
+                    >
+                        <FormField label="Monitor Name">
+                            <Input
+                                placeholder="Production API"
+                                value={name}
+                                onChange={(event) =>
+                                    setName(event.target.value)
+                                }
+                                disabled={loading}
+                                className={inputClassName}
+                            />
+                        </FormField>
+
+                        <FormField label="URL or Host">
+                            <Input
+                                placeholder="https://example.com"
+                                value={url}
+                                onChange={(event) =>
+                                    setUrl(event.target.value)
+                                }
+                                disabled={loading}
+                                className={inputClassName}
+                            />
+                        </FormField>
+
+                        <FormField label="Monitor Type">
+                            <NativeSelect
+                                value={monitorType}
+                                onChange={(event) =>
+                                    setMonitorType(event.target.value)
+                                }
+                                disabled={loading}
+                                className={selectClassName}
+                            >
+                                <NativeSelectOption value="HTTP">
+                                    HTTP
+                                </NativeSelectOption>
+
+                                <NativeSelectOption value="PING">
+                                    PING
+                                </NativeSelectOption>
+
+                                <NativeSelectOption value="DNS">
+                                    DNS
+                                </NativeSelectOption>
                             </NativeSelect>
-                            <Input placeholder="Expected Status" value={expectedStatus} onChange={(e) => setExpectedStatus(e.target.value)} />
-                            <Input placeholder="Keyword" value={keyword} onChange={(e) => setKeyword(e.target.value)} />
-                            <Textarea placeholder="Request Header" value={requestHeaders} onChange={(e) => setRequestHeaders(e.target.value)} />
-                        </>
+                        </FormField>
+                    </FormSection>
+
+                    {monitorType === "HTTP" && (
+                        <FormSection
+                            title="HTTP Configuration"
+                            description="Configure the request and expected response."
+                        >
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <FormField label="HTTP Method">
+                                    <NativeSelect
+                                        value={method}
+                                        onChange={(event) =>
+                                            setMethod(event.target.value)
+                                        }
+                                        disabled={loading}
+                                        className={selectClassName}
+                                    >
+                                        <NativeSelectOption value="GET">
+                                            GET
+                                        </NativeSelectOption>
+
+                                        <NativeSelectOption value="POST">
+                                            POST
+                                        </NativeSelectOption>
+
+                                        <NativeSelectOption value="PUT">
+                                            PUT
+                                        </NativeSelectOption>
+
+                                        <NativeSelectOption value="PATCH">
+                                            PATCH
+                                        </NativeSelectOption>
+
+                                        <NativeSelectOption value="DELETE">
+                                            DELETE
+                                        </NativeSelectOption>
+
+                                        <NativeSelectOption value="HEAD">
+                                            HEAD
+                                        </NativeSelectOption>
+
+                                        <NativeSelectOption value="OPTIONS">
+                                            OPTIONS
+                                        </NativeSelectOption>
+                                    </NativeSelect>
+                                </FormField>
+
+                                <FormField label="Expected Status">
+                                    <Input
+                                        type="number"
+                                        placeholder="200"
+                                        value={expectedStatus}
+                                        onChange={(event) =>
+                                            setExpectedStatus(
+                                                event.target.value
+                                            )
+                                        }
+                                        disabled={loading}
+                                        className={inputClassName}
+                                    />
+                                </FormField>
+                            </div>
+
+                            <FormField label="Keyword">
+                                <Input
+                                    placeholder="Optional response keyword"
+                                    value={keyword}
+                                    onChange={(event) =>
+                                        setKeyword(event.target.value)
+                                    }
+                                    disabled={loading}
+                                    className={inputClassName}
+                                />
+                            </FormField>
+
+                            <FormField label="Request Headers">
+                                <Textarea
+                                    placeholder={`{"Authorization": "Bearer token"}`}
+                                    value={requestHeaders}
+                                    onChange={(event) =>
+                                        setRequestHeaders(
+                                            event.target.value
+                                        )
+                                    }
+                                    disabled={loading}
+                                    className="min-h-24 border-slate-700 bg-slate-950 font-mono text-sm text-slate-100 placeholder:text-slate-600 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/20"
+                                />
+                            </FormField>
+
+                            {["POST", "PUT", "PATCH"].includes(method) && (
+                                <FormField label="Request Body">
+                                    <Textarea
+                                        placeholder={`{"name": "example"}`}
+                                        value={requestBody}
+                                        onChange={(event) =>
+                                            setRequestBody(
+                                                event.target.value
+                                            )
+                                        }
+                                        disabled={loading}
+                                        className="min-h-28 border-slate-700 bg-slate-950 font-mono text-sm text-slate-100 placeholder:text-slate-600 focus-visible:border-indigo-500 focus-visible:ring-indigo-500/20"
+                                    />
+                                </FormField>
+                            )}
+                        </FormSection>
                     )}
-                    {monitorType === "HTTP" && ["POST", "PUT", "PATCH"].includes(method) && (
-                        <Textarea placeholder="Request Body" value={requestBody} onChange={(e) => setRequestBody(e.target.value)} />
-                    )}
-                    <Input placeholder="Timeout (ms)" value={timeout} onChange={(e) => setTimeout(e.target.value)} />
-                    <Input placeholder="Interval (seconds)" value={interval} onChange={(e) => setInterval(e.target.value)} />
+
+                    <FormSection
+                        title="Timing Settings"
+                        description="Set request timeout and check frequency."
+                    >
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <FormField label="Timeout">
+                                <div className="relative">
+                                    <Input
+                                        type="number"
+                                        placeholder="5000"
+                                        value={timeout}
+                                        onChange={(event) =>
+                                            setTimeout(event.target.value)
+                                        }
+                                        disabled={loading}
+                                        className={`${inputClassName} pr-12`}
+                                    />
+
+                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                        ms
+                                    </span>
+                                </div>
+                            </FormField>
+
+                            <FormField label="Interval">
+                                <div className="relative">
+                                    <Input
+                                        type="number"
+                                        placeholder="60"
+                                        value={interval}
+                                        onChange={(event) =>
+                                            setInterval(
+                                                event.target.value
+                                            )
+                                        }
+                                        disabled={loading}
+                                        className={`${inputClassName} pr-16`}
+                                    />
+
+                                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">
+                                        seconds
+                                    </span>
+                                </div>
+                            </FormField>
+                        </div>
+                    </FormSection>
                 </div>
-                <Button disabled={loading} className="w-full" type="button" onClick={handleDialog}>
-                     {loading ? mode === "add" ? "Creating..." : "Saving...": mode === "add" ? "Create Monitor" : "Save Changes"}
-                </Button>
+
+                <div className="mt-2 flex justify-end gap-3 border-t border-slate-800 pt-5">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        disabled={loading}
+                        onClick={() => setOpen(false)}
+                        className="border-slate-700 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white"
+                    >
+                        Cancel
+                    </Button>
+
+                    <Button
+                        disabled={loading}
+                        type="button"
+                        onClick={handleDialog}
+                        className="min-w-36 bg-indigo-600 text-white hover:bg-indigo-500"
+                    >
+                        {loading && (
+                            <Loader2 className="mr-2 size-4 animate-spin" />
+                        )}
+
+                        {loading
+                            ? mode === "add"
+                                ? "Creating..."
+                                : "Saving..."
+                            : mode === "add"
+                              ? "Create Monitor"
+                              : "Save Changes"}
+                    </Button>
+                </div>
             </DialogContent>
         </Dialog>
+    );
+}
+
+type FormSectionProps = {
+    title: string;
+    description: string;
+    children: React.ReactNode;
+};
+
+function FormSection({
+    title,
+    description,
+    children,
+}: FormSectionProps) {
+    return (
+        <section className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+            <div className="mb-4">
+                <h3 className="font-semibold text-slate-200">
+                    {title}
+                </h3>
+
+                <p className="mt-1 text-xs text-slate-500">
+                    {description}
+                </p>
+            </div>
+
+            <div className="space-y-4">
+                {children}
+            </div>
+        </section>
+    );
+}
+
+type FormFieldProps = {
+    label: string;
+    children: React.ReactNode;
+};
+
+function FormField({
+    label,
+    children,
+}: FormFieldProps) {
+    return (
+        <div className="space-y-2">
+            <label className="text-sm font-medium text-slate-300">
+                {label}
+            </label>
+
+            {children}
+        </div>
     );
 }
 
