@@ -6,17 +6,25 @@ type ChartProps = {
     logs : Log[]
     
 }
-function ResponseChart({logs}: ChartProps) {
+function ResponseChart({logs}: ChartProps){
     const chartConfig = {
-    responseTime: {
-        label: "Response Time",
-        color: "var(--chart-1)",
-    },
-} satisfies ChartConfig;
+        responseTime: {
+            label: "Response Time",
+            color: "var(--chart-1)",
+        },
+    } satisfies ChartConfig;
 
     const chartData = logs
-        .filter((log) => log.response_time_ms_var !== null).reverse().map((log) => ({
-            time: log.checked_at_var,
+        .filter((log) => log.response_time_ms_var !== null)
+        .reverse()
+        .map((log) => ({
+            time: new Date(log.checked_at_var).toLocaleString("en-EN", {
+                day: "2-digit",
+                month: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+            }),
             responseTime: log.response_time_ms_var,
         }));
 
