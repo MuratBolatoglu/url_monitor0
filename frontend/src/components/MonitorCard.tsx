@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import {  Trash2 } from "lucide-react";
 import type { Monitor } from "@/types/Monitor";
 import api from "@/services/api";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import type { Log } from "@/types/Log";
 import MonitorLogs from "@/components/MonitorLogs";
 import ResponseChart from "@/components/ResponseChart";
@@ -14,10 +14,15 @@ type MonitorCardProps ={
     onMonitorDeleted: () => Promise<void>;
     onMonitorEdited: () => Promise<void>;
 }
-
 function MonitorCard({ monitor, onMonitorDeleted, onMonitorEdited }: MonitorCardProps) {
     const [logs, setLogs] = useState<Log[]>([]);
     const [loadingLogs, setLoadingLogs] = useState(false);
+
+    useEffect(() => {
+        fetchLogs();
+        const intervalId = setInterval(() => {fetchLogs();}, 5000);
+        return () => clearInterval(intervalId);
+    }, [monitor.id_var]);
 
     async function deleteMonitor() {
         try {
@@ -50,34 +55,36 @@ function MonitorCard({ monitor, onMonitorDeleted, onMonitorEdited }: MonitorCard
                     </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <div className="grid gap-4 pt-3 md:grid-cols-[1fr_2fr]">
+                    <div className="grid items-start gap-4 pt-3 md:grid-cols-[1fr_2fr]">
                         <div className="space-y-2">
                             <MonitorDetail label="URL" value={monitor.urlVar} />
-                            <MonitorDetail label="Monitor Type" value={monitor.monitor_type_var} />
+                            <MonitorDetail label="Monitor Type" value={monitor.monitor_type_var}/>
                             {monitor.monitor_type_var === "HTTP" && (
                                 <>
-                                    <MonitorDetail label="HTTP Method" value={monitor.http_method_var ?? "-"} />
-                                    <MonitorDetail label="Expected Status" value={monitor.expectedCodeVar ?? "-"} />
-                                    <MonitorDetail label="Keyword" value={monitor.keyword_var || "-"} />
+                                    <MonitorDetail label="HTTP Method" value={monitor.http_method_var ?? "-"}/>
+                                    <MonitorDetail label="Expected Status" value={monitor.expectedCodeVar ?? "-"}/>
+                                    <MonitorDetail label="Keyword" value={monitor.keyword_var || "-"}/>
                                 </>
                             )}
-                            <MonitorDetail label="Interval" value={`${monitor.intervalSecondsVar} seconds`} />
-                            <MonitorDetail label="Timeout" value={`${monitor.timeoutVar} ms`} />
-                            <MonitorDetail label="Status Code" value={monitor.statusCode ?? "-"} />
-                            <MonitorDetail label="Last Checked" value={monitor.last_checked_at_var ? new Date(monitor.last_checked_at_var).toLocaleString() : "Not checked yet"} />
+                            <MonitorDetail label="Interval" value={`${monitor.intervalSecondsVar} seconds`}/>
+                            <MonitorDetail label="Timeout" value={`${monitor.timeoutVar} ms`}/>
+                            <MonitorDetail label="Status Code" value={monitor.statusCode ?? "-"}/>
+                            <MonitorDetail label="Last Checked" value={monitor.last_checked_at_var? new Date(monitor.last_checked_at_var).toLocaleString() : "Not checked yet"}/>
                         </div>
-                        <div className="min-h-40 rounded-lg border p-3">
-                            <h3 className="mb-2 font-semibold">Response Time</h3>
-                            <div className="flex h-28 items-center justify-center text-sm text-muted-foreground"><ResponseChart logs={logs}></ResponseChart></div>
+                        <div className="min-w-0 space-y-4">
+                            <div className="rounded-lg border p-3">
+                                <h3 className="mb-2 font-semibold">Response Time</h3>
+                                <ResponseChart logs={logs} />
+                            </div>
+                            <div className="flex justify-end gap-2">
+                                <AddMonitorDialog mode="edit" onSuccess={onMonitorEdited} monitor={monitor}/>
+                                <Button onClick={deleteMonitor} size="icon" aria-label="Delete monitor" className="hover:bg-red-300"><Trash2 color="red" /></Button>
+                            </div>
+                            <div>
+                                <h3 className="mb-2 font-semibold">Logs</h3>
+                                <MonitorLogs logs={logs} loading={loadingLogs}/>
+                            </div>
                         </div>
-                    </div>
-                    <div className="mt-3 flex w-full justify-end gap-2">
-                        <AddMonitorDialog mode="edit" onSuccess={onMonitorEdited} monitor={monitor} />
-                        <Button onClick={()=>deleteMonitor()} size="icon" aria-label="Delete monitor" className="hover:bg-red-300"><Trash2 color="red" /></Button>
-                    </div>
-                    <div className="mt-4">
-                        <h3 className="mb-2 font-semibold">Logs</h3>
-                        <MonitorLogs logs={logs} loading={loadingLogs}/>
                     </div>
                 </AccordionContent>
             </AccordionItem>

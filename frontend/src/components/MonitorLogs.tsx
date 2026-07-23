@@ -20,7 +20,7 @@ function MonitorLogs({ logs, loading }: MonitorLogsProps) {
         <ScrollArea className="h-64 rounded-md border">
             <div className="space-y-2 p-3">
                 {logs.map((log) => (
-                    <div key={log.idVar}className="rounded-md border p-3">
+                    <div key={log.id_var} className="rounded-md border p-3">
                         <div className="flex items-center justify-between gap-3">
                             <span className="font-medium">
                                 {log.status_var}

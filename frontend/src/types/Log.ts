@@ -1,5 +1,5 @@
 export interface Log {
-    idVar: number;
+    id_var: number;
     status_var: string;
     status_code_var: number | null;
     response_time_ms_var: number | null;
