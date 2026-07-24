@@ -1,18 +1,9 @@
 import { Cog, Loader2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import {Dialog,DialogContent,DialogHeader,DialogTitle,DialogTrigger,} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-    NativeSelect,
-    NativeSelectOption,
-} from "@/components/ui/native-select";
+import {NativeSelect,NativeSelectOption,} from "@/components/ui/native-select";
 import api from "@/services/api";
 import type { Monitor } from "@/types/Monitor";
 import { useEffect, useState } from "react";
@@ -30,7 +21,6 @@ function AddMonitorDialog({
 }: AddMonitorDialogProps) {
     const [loading, setLoading] = useState(false);
     const [open, setOpen] = useState(false);
-
     const [name, setName] = useState("");
     const [url, setUrl] = useState("");
     const [monitorType, setMonitorType] = useState("HTTP");

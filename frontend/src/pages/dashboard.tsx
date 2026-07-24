@@ -24,11 +24,9 @@ function Dashboard() {
 
     useEffect(() => {
         fetchMonitors();
-
         const intervalId = setInterval(() => {
             fetchMonitors();
         }, 5000);
-
         return () => clearInterval(intervalId);
     }, []);
 
@@ -37,16 +35,9 @@ function Dashboard() {
         navigate("/login");
     }
 
-    const upMonitorCount = monitors.filter(
-        (monitor) => monitor.statusVar === "UP"
-    ).length;
-
-    const downMonitorCount = monitors.filter(
-        (monitor) => monitor.statusVar === "DOWN"
-    ).length;
-
-    const pendingMonitorCount =
-        monitors.length - upMonitorCount - downMonitorCount;
+    const upMonitorCount = monitors.filter((monitor) => monitor.statusVar === "UP").length;
+    const downMonitorCount = monitors.filter((monitor) => monitor.statusVar === "DOWN").length;
+    const pendingMonitorCount = monitors.length - upMonitorCount - downMonitorCount;
 
     return (
         <div className="min-h-screen bg-slate-950 text-slate-100">
@@ -73,54 +64,19 @@ function Dashboard() {
             </header>
             <main className="mx-auto max-w-7xl px-6 py-8">
                 <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-                    <SummaryCard
-                        title="Total Monitors"
-                        value={monitors.length}
-                        description="All configured monitors"
-                        icon={<Gauge className="size-5" />}
-                        iconClassName="bg-indigo-500/15 text-indigo-400"
-                    />
-
-                    <SummaryCard
-                        title="Operational"
-                        value={upMonitorCount}
-                        description="Currently online"
-                        icon={<CircleCheckBig className="size-5" />}
-                        iconClassName="bg-emerald-500/15 text-emerald-400"
-                    />
-
-                    <SummaryCard
-                        title="Unavailable"
-                        value={downMonitorCount}
-                        description="Currently offline"
-                        icon={<CircleX className="size-5" />}
-                        iconClassName="bg-red-500/15 text-red-400"
-                    />
-
-                    <SummaryCard
-                        title="Pending"
-                        value={pendingMonitorCount}
-                        description="Waiting for first check"
-                        icon={<Activity className="size-5" />}
-                        iconClassName="bg-amber-500/15 text-amber-400"
-                    />
+                    <SummaryCard title="Total Monitors" value={monitors.length} description="All configured monitors" icon={<Gauge className="size-5" />} iconClassName="bg-indigo-500/15 text-indigo-400"/>
+                    <SummaryCard title="Operational" value={upMonitorCount} description="Currently online" icon={<CircleCheckBig className="size-5" />} iconClassName="bg-emerald-500/15 text-emerald-400"/>                                                                                               
+                    <SummaryCard title="Unavailable" value={downMonitorCount} description="Currently offline" icon={<CircleX className="size-5" />} iconClassName="bg-red-500/15 text-red-400"/>
+                    <SummaryCard title="Pending" value={pendingMonitorCount} description="Waiting for first check" icon={<Activity className="size-5" />} iconClassName="bg-amber-500/15 text-amber-400"/>
                 </section>
-
                 <section className="mt-8">
                     <div className="mb-5 flex items-center justify-between">
                         <div>
-                            <h2 className="text-xl font-semibold">
-                                Your Monitors
-                            </h2>
+                            <h2 className="text-xl font-semibold">Your Monitors</h2>
 
-                            <p className="mt-1 text-sm text-slate-400">
-                                Expand a monitor to view details, logs and response times.
-                            </p>
+                            <p className="mt-1 text-sm text-slate-400">Expand a monitor to view details, logs and response times.</p>
                         </div>
-
-                        <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-sm text-slate-400">
-                            {monitors.length} monitor
-                        </span>
+                        <span className="rounded-full border border-slate-700 bg-slate-900 px-3 py-1 text-sm text-slate-400">{monitors.length} monitor</span> 
                     </div>
 
                     {loading ? (
@@ -175,36 +131,18 @@ type SummaryCardProps = {
     iconClassName: string;
 };
 
-function SummaryCard({
-    title,
-    value,
-    description,
-    icon,
-    iconClassName,
-}: SummaryCardProps) {
+function SummaryCard({title,value,description,icon,iconClassName}: SummaryCardProps) {
     return (
         <div className="rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-slate-700">
             <div className="flex items-start justify-between">
                 <div>
-                    <p className="text-sm font-medium text-slate-400">
-                        {title}
-                    </p>
-
-                    <p className="mt-2 text-3xl font-bold tracking-tight">
-                        {value}
-                    </p>
+                    <p className="text-sm font-medium text-slate-400">{title}</p>
+                    <p className="mt-2 text-3xl font-bold tracking-tight">{value}</p>
                 </div>
 
-                <div
-                    className={`flex size-10 items-center justify-center rounded-xl ${iconClassName}`}
-                >
-                    {icon}
-                </div>
+                <div className={`flex size-10 items-center justify-center rounded-xl ${iconClassName}`}>{icon}</div>   
             </div>
-
-            <p className="mt-3 text-sm text-slate-500">
-                {description}
-            </p>
+            <p className="mt-3 text-sm text-slate-500">{description}</p>   
         </div>
     );
 }
