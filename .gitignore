@@ -1,0 +1,9 @@
+# Environment
+.env
+
+# Docker
+*.tar
+
+# OS
+.DS_Store
+Thumbs.db
