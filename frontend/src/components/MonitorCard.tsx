@@ -1,25 +1,11 @@
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-} from "@/components/ui/accordion";
-
+import {Accordion,AccordionContent,AccordionItem,AccordionTrigger,} from "@/components/ui/accordion";
 import AddMonitorDialog from "@/components/AddMonitorDialog";
 import { Button } from "@/components/ui/button";
-import {
-    Activity,
-    Clock3,
-    Globe2,
-    Trash2,
-} from "lucide-react";
-
+import {Activity,Clock3,Globe2,Trash2,} from "lucide-react";
 import type { Monitor } from "@/types/Monitor";
 import type { Log } from "@/types/Log";
-
 import api from "@/services/api";
-import { useEffect, useState } from "react";
-
+import { useEffect, useRef, useState } from "react";
 import MonitorLogs from "@/components/MonitorLogs";
 import ResponseChart from "@/components/ResponseChart";
 
@@ -36,7 +22,7 @@ function MonitorCard({
 }: MonitorCardProps) {
     const [logs, setLogs] = useState<Log[]>([]);
     const [loadingLogs, setLoadingLogs] = useState(false);
-
+    const logsLoadedOnce = useRef(false);
     useEffect(() => {
         fetchLogs();
 
@@ -58,13 +44,16 @@ function MonitorCard({
 
     async function fetchLogs() {
         try {
-            setLoadingLogs(true);
+            if (!logsLoadedOnce.current) {
+                setLoadingLogs(true);
+            }
 
             const response = await api.get(
                 `/logs/monitor/${monitor.id_var}`
             );
 
             setLogs(response.data);
+            logsLoadedOnce.current = true;
         } catch (error) {
             console.error(error);
         } finally {

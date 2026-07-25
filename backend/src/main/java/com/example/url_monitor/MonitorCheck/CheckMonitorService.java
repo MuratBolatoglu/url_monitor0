@@ -44,7 +44,7 @@ public class CheckMonitorService {
         String prev=monitor.getStatusVar();
         try {
             HttpClient client = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).build();
-            HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(monitor.getUrlVar())).timeout(Duration.ofSeconds(monitor.getTimeoutVar()));
+            HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(monitor.getUrlVar())).timeout(Duration.ofMillis(monitor.getTimeoutVar()));
 
             ObjectMapper mapper = new ObjectMapper();
             if(monitor.getRequestHeadersVar() != null && !monitor.getRequestHeadersVar().isBlank()){
@@ -84,7 +84,7 @@ public class CheckMonitorService {
             int statusCode = response.statusCode();
             if (statusCode == monitor.getExpectedCodeVar())  monitor.setStatusVar("UP");
             else monitor.setStatusVar("DOWN");
-            if(!monitor.getKeyword_var().isBlank() && monitor.getKeyword_var() != null){
+            if(monitor.getKeyword_var() != null && !monitor.getKeyword_var().isBlank() ){
                 String body= response.body();
                 if(!body.contains(monitor.getKeyword_var())) monitor.setStatusVar("DOWN");
             }
@@ -154,7 +154,7 @@ public class CheckMonitorService {
             InetAddress address = InetAddress.getByName(host);
 
             long start=System.currentTimeMillis();
-            boolean reach = address.isReachable(monitor.getTimeoutVar() * 1000);
+            boolean reach = address.isReachable(monitor.getTimeoutVar() );
             long end = System.currentTimeMillis();
             int responseTime = (int) (end-start);
 
